@@ -6,3 +6,5 @@
 	<string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
 </dict>
 </plist>
+#installing TCGA packages
+installTCGA(packages = c("RTCGA.clinical", "RTCGA.mutations", "RTCGA.rnaseq","RTCGA.RPPA", "RTCGA.mRNA", "RTCGA.CNV", "RTCGA.miRNASeq", "RTCGA.PANCAN12","RTCGA.methylation"), build_vignettes = TRUE)
