@@ -13,3 +13,11 @@ checkTCGA('DataSets', 'COAD', date = NULL)
 #downloadTCGA enables one to download TCGA data from specified dates of releases of concrete Cohorts of cancer types. 
 dir.create( 'data')
 downloadTCGA( cancerTypes = 'COAD', dataSet = 'Merge_Clinical.Level_1', destDir = 'data', date =  tail( checkTCGA('Dates'), 2 )[1] )
+#readTCGA function allows to read unzipped files that were downloaded using downloadTCGA
+sapply( 'COAD', function( element ){
+    folder <- grep( paste0( '(_',element,'\\.', '|','_',element,'-FFPE)', '.*Clinical'),
+                    list.files('data/'),value = TRUE)
+    path <- paste0( 'data/', folder, '/', element, '.clin.merged.txt')
+    assign( value = readTCGA( path, 'clinical' ), 
+            x = paste0(element, '.clin.data'), envir = .GlobalEnv)
+#survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
