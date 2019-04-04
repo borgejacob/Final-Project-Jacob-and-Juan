@@ -21,3 +21,12 @@ sapply( 'COAD', function( element ){
     assign( value = readTCGA( path, 'clinical' ), 
             x = paste0(element, '.clin.data'), envir = .GlobalEnv)
 #survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
+# Extracting Survival Data
+library(RTCGA.clinical)
+survivalTCGA(COAD.clinical, extract.cols = "admin.disease_code") -> COAD.survInfo
+# first extract survival info, then munge data
+survivalTCGA(COAD.clinical,
+extract.cols = c("patient.drugs.drug.therapy_types.therapy_type")) %>%
+filter(patient.drugs.drug.therapy_types.therapy_type %in%
+c("chemotherapy", "hormone therapy")) %>%
+rename(therapy = patient.drugs.drug.therapy_types.therapy_type) -> COAD.survInfo.chemo
