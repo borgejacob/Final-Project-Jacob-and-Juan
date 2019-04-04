@@ -30,3 +30,6 @@ extract.cols = c("patient.drugs.drug.therapy_types.therapy_type")) %>%
 filter(patient.drugs.drug.therapy_types.therapy_type %in%
 c("chemotherapy", "hormone therapy")) %>%
 rename(therapy = patient.drugs.drug.therapy_types.therapy_type) -> COAD.survInfo.chemo
+# Kaplan-Meier Survival Curves
+# The following code creates errors, need to troubleshoot
+kmTCGA(BRCAOV.survInfo, explanatory.names = "admin.disease_code", pval = TRUE)
