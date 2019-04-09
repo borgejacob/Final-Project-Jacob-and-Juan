@@ -7,6 +7,9 @@
 </dict>
 </plist>
 #installing TCGA packages
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("RTCGA.clinical", version = "3.8")
 installTCGA(packages = c("RTCGA.clinical", "RTCGA.mutations", "RTCGA.rnaseq","RTCGA.RPPA", "RTCGA.mRNA", "RTCGA.CNV", "RTCGA.miRNASeq", "RTCGA.PANCAN12","RTCGA.methylation"), build_vignettes = TRUE)
 #The checkTCGA function let's to check TCGA datasets' names for current release date and cohort. COAD= Colon Adenocarcinoma
 checkTCGA('DataSets', 'COAD', date = NULL)
