@@ -35,4 +35,4 @@ filter(patient.drugs.drug.therapy_types.therapy_type %in%
 c("chemotherapy", "hormone therapy")) 
 rename(therapy = patient.drugs.drug.therapy_types.therapy_type) -> COAD.survInfo.chemo
 # Kaplan-Meier Survival Curves
-kmTCGA(COAD.survInfo, explanatory.names = "admin.disease_code", pval = TRUE)
+kmTCGA(COAD.survInfo, times = "times", status = "patient.vital_status", explanatory.names = "admin.disease_code", main = "Survival Curves", pval = TRUE)
