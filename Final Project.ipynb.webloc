@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
+  <<<<<<< HEAD
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>URL</key>
-	<string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
-</dict>
-</plist>
-#installing TCGA packages
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("RTCGA.clinical", version = "3.8")
-installTCGA(packages = c("RTCGA.clinical", "RTCGA.mutations", "RTCGA.rnaseq","RTCGA.RPPA", "RTCGA.mRNA", "RTCGA.CNV", "RTCGA.miRNASeq", "RTCGA.PANCAN12","RTCGA.methylation"), build_vignettes = TRUE)
-#The checkTCGA function let's to check TCGA datasets' names for current release date and cohort. COAD= Colon Adenocarcinoma
-=======
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
+    <dict>
+    <key>URL</key>
+    <string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
+    </dict>
+    </plist>
+    
+    
+    <plist version="1.0">
     <dict>
     <key>URL</key>
     <string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
@@ -24,24 +18,27 @@ installTCGA(packages = c("RTCGA.clinical", "RTCGA.mutations", "RTCGA.rnaseq","RT
     
 # Installing RTCGA and other packages 
 ## Installing and opening RTCGA  
-
+    
 install.packages("BiocManager")
 BiocManager::install("RTCGA", version = "3.8")
 library(RTCGA)
-
+  
 ##installing RTCGA packages
 installTCGA(packages = "RTCGA.clinical", build_vignettes = TRUE)
-library(RTCGA.clinical) #Include note that if not 1st time you can start from here? 
-
+library(RTCGA.clinical)  
+  
 ##Installing other packages
 install.packages("devtools")
 library(devtools)
+library(dplyr)
+library(survival)
+library(survminer)
   
 #Cheking and downloading TCGA datasets  
-
+  
 ## infoTCGA()function provides a list of available cohorst for statistical analyses, along with relevant information
 infoTCGA()
-
+  
 ## checkTCGA provides detailed information about a selected dataset 
 >>>>>>> e194d46ff62a3a658bdfcc6ec36599a3d419f280
 checkTCGA('DataSets', 'COAD', date = NULL)
@@ -50,28 +47,8 @@ checkTCGA('DataSets', 'COAD', date = NULL)
 dir.create( 'data')
 downloadTCGA( cancerTypes = 'COAD', dataSet = 'Merge_Clinical.Level_1', destDir = 'data', date =  tail( checkTCGA('Dates'), 2 )[1] )
   
-##readTCGA function allows to read unzipped files that were downloaded using downloadTCGA, organizing them into a data frame. 
+##readTCGA function allows to read unzipped files that were downloaded using downloadTCGA, organizing them into a data frame. Other devtools functions (sapply, grep...) are used to save the data in a more manageable format) 
 sapply( 'COAD', function( element ){
-<<<<<<< HEAD
-    folder <- grep( paste0( '(_',element,'\\.', '|','_',element,'-FFPE)', '.*Clinical'),
-                    list.files('data/'),value = TRUE)
-    path <- paste0( 'data/', folder, '/', element, '.clin.merged.txt')
-    assign( value = readTCGA( path, 'clinical' ), 
-            x = paste0(element, '.clin.data'), envir = .GlobalEnv)
-            })
-#survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
-# Extracting Survival Data
-library(RTCGA.clinical)
-survivalTCGA(COAD.clinical, extract.cols = "admin.disease_code") -> COAD.survInfo
-# first extract survival info, then munge data
-survivalTCGA(COAD.clinical,
-extract.cols = c("patient.drugs.drug.therapy_types.therapy_type"))
-filter(patient.drugs.drug.therapy_types.therapy_type %in%
-c("chemotherapy", "hormone therapy")) 
-rename(therapy = patient.drugs.drug.therapy_types.therapy_type) -> COAD.survInfo.chemo
-# Kaplan-Meier Survival Curves
-kmTCGA(COAD.survInfo, times = "times", status = "patient.vital_status", explanatory.names = "admin.disease_code", main = "Survival Curves", pval = TRUE)
-=======
   folder <- grep( paste0( '(_',element,'\\.', '|','_',element,'-FFPE)', '.*Clinical'),
                   list.files('data/'),value = TRUE)
   path <- paste0( 'data/', folder, '/', element, '.clin.merged.txt')
@@ -79,45 +56,32 @@ kmTCGA(COAD.survInfo, times = "times", status = "patient.vital_status", explanat
           x = paste0(element, '.clin.data'), envir = .GlobalEnv)
 })
 
-##A separate dataframe can be created with column names to have a sercheable list of available information. 
+##A separate dataframe can be created with column names to have a sercheable list of available information.
+
 cl <- colnames(COAD.clin.data)
 cl <- as.data.frame(colnames(COAD.clin.data))
 View(cl)
 
-################## SURVIVAL TRYAL ########################
-
-install.packages("survival")
-install.packages("dplyr")
-install.packages("survminer")
-library(survival)
-library(survminer)
-library(dplyr)
-
-#Just playing so far
-age <- as.numeric(COAD.clin.data$patient.age_at_initial_pathologic_diagnosis)
-hist(age)
-
-age_group <- ifelse(age >=45, "old", "young")
-age_group <- factor(age_group)
-
-surv_playing <- Surv(time = as.numeric(COAD.clin.data$patient.days_to_death), event = COAD.clin.data$patient.vital_status)
-
-fitdata <- survfit(surv_playing ~ age_group)
-ggsurvplot(fit1, data = COAD.clin.data, pval = TRUE)
+# WORKING CURVE ########################################################################
+#survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
   
-#####################################NECESSARY CODE???####################################################################
- 
-  #survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
-  # Extracting Survival Data
-  library(RTCGA.clinical)
-  survivalTCGA(COAD.clinical, extract.cols = "admin.disease_code") -> COAD.survInfo
-  # first extract survival info, then munge data
-  survivalTCGA(COAD.clinical,
-               extract.cols = c("patient.drugs.drug.therapy_types.therapy_type")) %>%
-    filter(patient.drugs.drug.therapy_types.therapy_type %in%
-             c("chemotherapy", "hormone therapy")) %>%
-    rename(therapy = patient.drugs.drug.therapy_types.therapy_type) -> COAD.survInfo.chemo
-  # Kaplan-Meier Survival Curves
-  # The following code creates errors, need to troubleshoot
-  kmTCGA(BRCAOV.survInfo, explanatory.names = "admin.disease_code", pval = TRUE)
->>>>>>> e194d46ff62a3a658bdfcc6ec36599a3d419f280
+survivalTCGA(COAD.clin.data, extract.cols = "patient.gender") -> COAD.survInfo.gender
+
+surv_object <- Surv(time = COAD.survInfo.gender$times, event = COAD.survInfo.gender$patient.vital_status)
+
+fit1 <- survfit(surv_object ~ patient.gender, data = COAD.survInfo.gender)
+
+summary(fit1)
+
+ggsurvplot(fit1, data = COAD.survInfo.gender, pval = TRUE)
+
+#########################################################################################
+
+# Rename function useful to simplify column titles and filter could be useful but didnt get it to work. 
+
+survivalTCGA(COAD.clin.data, extract.cols = "patient.drugs.drug-10.therapy_types.therapy_type") -> COAD.survInfo.chemo
+
+filter(.data = COAD.survInfo.chemo%therapy, c("chemotherapy", "hormone therapy"))
+
+rename(.data = COAD.survInfo.chemo, therapy = "patient.drugs.drug-10.therapy_types.therapy_type") -> COAD.survInfo.chemo
+  
