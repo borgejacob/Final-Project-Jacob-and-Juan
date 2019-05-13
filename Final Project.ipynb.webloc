@@ -1,21 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  <<<<<<< HEAD
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-  <plist version="1.0">
-    <dict>
-    <key>URL</key>
-    <string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
-    </dict>
-    </plist>
+
     
-    
-    <plist version="1.0">
-    <dict>
-    <key>URL</key>
-    <string>http://localhost:8888/notebooks/Final%20Project/Final%20Project.ipynb</string>
-    </dict>
-    </plist>
-    
+
 # Installing RTCGA and other packages 
 ## Installing and opening RTCGA  
     
@@ -28,7 +13,6 @@ installTCGA(packages = "RTCGA.clinical", build_vignettes = TRUE)
 library(RTCGA.clinical)  
   
 ##Installing other packages
-install.packages("devtools")
 library(devtools)
 library(dplyr)
 library(survival)
@@ -62,26 +46,21 @@ cl <- colnames(COAD.clin.data)
 cl <- as.data.frame(colnames(COAD.clin.data))
 View(cl)
 
-# WORKING CURVE ########################################################################
-#survivalTCGA is used to extract survival information from clinical datasets from the TCGA project
-  
-survivalTCGA(COAD.clin.data, extract.cols = "patient.gender") -> COAD.survInfo.gender
+#survivalTCGA is used to extract survival information from clinical datasets from the TCGA project. Here we use patient gender as an example. 
 
-surv_object <- Surv(time = COAD.survInfo.gender$times, event = COAD.survInfo.gender$patient.vital_status)
+COAD.survInfo.gender <- survivalTCGA(COAD.clin.data, extract.cols = "patient.gender")
 
-fit1 <- survfit(surv_object ~ patient.gender, data = COAD.survInfo.gender)
+##Furthermore, this reformated into a compiled version of the time of onset and event that can be interpreted by the following survfit function, which will fit the data to a Kaplan-Meier curve. A + behind survival times indicates censored data points.
 
-summary(fit1)
+Survival_Gender <- Surv(time = COAD.survInfo.gender$times, event = COAD.survInfo.gender$patient.vital_status)
 
-ggsurvplot(fit1, data = COAD.survInfo.gender, pval = TRUE)
+KP_Gender <- survfit(Survival_Gender ~ patient.gender, data = COAD.survInfo.gender)
 
-#########################################################################################
+##The summary function will allow us to take a sneak peek of your data, look at survival times and more.
 
-# Rename function useful to simplify column titles and filter could be useful but didnt get it to work. 
+summary(KP_Gender)
 
-survivalTCGA(COAD.clin.data, extract.cols = "patient.drugs.drug-10.therapy_types.therapy_type") -> COAD.survInfo.chemo
+##FInally the ggsurvplot function will allow us to visualize the data as a customizable survival graph
+ggsurvplot(KP_Gender, data = COAD.survInfo.gender, pval = TRUE)
 
-filter(.data = COAD.survInfo.chemo%therapy, c("chemotherapy", "hormone therapy"))
-
-rename(.data = COAD.survInfo.chemo, therapy = "patient.drugs.drug-10.therapy_types.therapy_type") -> COAD.survInfo.chemo
   
